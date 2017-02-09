@@ -17,7 +17,7 @@ class action_plugin_doctimeread extends DokuWiki_Action_Plugin {
         }
 
        $time = $_GET['time'];
-
+       $day = $_GET['day'];
        file_put_contents('time.txt', $time . "\n");
     }
 
@@ -31,17 +31,5 @@ class action_plugin_doctimeread extends DokuWiki_Action_Plugin {
                             'src'     => $path . 'doctimeread' . DIRECTORY_SEPARATOR . 'doctimeread.js');
     }
 
-    public function insert_button(Doku_Event $event, $param) {
-$path = "/dokuwiki/lib/plugins/";
-
-        $event->data[] = array (
-            'type' => 'format',
-            'title' => $this->getLang('qb_abutton'),
-            'icon' => '/../../plugins/doctimeread/button.jpg',
-            'open' => '<abutton>',
-            'close' => '</abutton>',
-        );
-    }
 }
-
 ?>
