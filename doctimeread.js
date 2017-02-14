@@ -102,13 +102,10 @@ window.onload=function(){
 
 //Zeitmessung wird gestoppt und gespeichert      
 window.onbeforeunload=function(){
- //timeSite = Math.round( ( Date.now() / 1000 ) - time );
  var x = new XMLHttpRequest;
  x.open( 'get','/dokuwiki/lib/plugins/doctimeread/storetime.php?action=store&time=' + time1+'&day='+date );
  x.send();
 }
-
-//Zeit stoppen32,
 
 
 //Funktion zum ein und ausblenden der Zeit

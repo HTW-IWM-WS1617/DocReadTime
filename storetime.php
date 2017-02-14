@@ -6,9 +6,11 @@ if ($action == 'store')
 {
 	$time = $_GET['time'];
     $day = $_GET['day'];
-	file_put_contents('time.txt',  $time  . "\r\n", FILE_APPEND);
+    $sym = ";";
+	$data = $day .$sym .$time ."\n";//.= join("\t", $row1)."\n";
+	file_put_contents('time.csv',  $data  . "\r\n", FILE_APPEND);
 
-	
+
 }
 else if ($action == 'read')
 {
