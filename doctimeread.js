@@ -126,18 +126,21 @@ function einblenden(timenode )
 function grafzeichnen() {
     var canvas = document.getElementById('canvas');
     var ctx = canvas.getContext('2d');
- 
     ctx.beginPath();
     var xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function () {
         if (xhr.readyState == XMLHttpRequest.DONE) {
+            var v_date =[];
+            var v_time =[];
             var daten = JSON.parse(xhr.responseText);
-           
-            for (var i = 0;i<daten.length;i++) {
-             
+            var data_split = daten.toString().split(",");
+            for (var i = 0;i<data_split.length;i++) {
+             var split_time = data_split[i].toString().split(';');
+             v_date.push(split_time[0]);
+             v_time.push(split_time[1]);
+            }
             ctx.moveTo(0,daten[i]);
             ctx.lineTo(300,150);
-            }
             ctx.stroke();
         }
     }
