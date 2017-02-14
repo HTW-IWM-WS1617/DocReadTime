@@ -7,6 +7,8 @@ if ($action == 'store')
 	$time = $_GET['time'];
     $day = $_GET['day'];
 	file_put_contents('time.txt',  $time  . "\r\n", FILE_APPEND);
+
+	
 }
 else if ($action == 'read')
 {

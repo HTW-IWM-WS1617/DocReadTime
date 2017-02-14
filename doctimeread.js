@@ -1,10 +1,32 @@
 var time, timeSite, date,dateSite;
 var timeNodeList;
+var time1;
+var windowIsFocus;
+var timeOld=0;
+var intervall;
+var lastTime=0;
+var timeAb=0;
+var diff=0;
+window.onfocus = function()
+{
+    windowIsFocus = true;
+}
+
+window.onblur = function()
+{
+    windowIsFocus = false;
+}
 
 //Hauptfunktion
 function testFunc()
 {
     var usertools = document.getElementById('dokuwiki__content' ).getElementsByTagName( 'div' )[2]; 
+    
+    var table = document.createElement('table');
+    table.style.width = '100%';
+    var tbdy = document.createElement('tbody');
+    tbdy.setAttribute('id','Haupttabelle');
+    
     timeNodeList = document.createElement( 'p' );
     timeNodeList.setAttribute( 'id', 'session_counter' );
     var timeText = document.createTextNode( '' );
@@ -14,15 +36,50 @@ function testFunc()
     btn.appendChild(t);     
     var graf = document.createElement('canvas');
     graf.setAttribute('id','canvas');
-    graf.setAttribute('style', '"height: 300px; width: 100%;"')   ;
-    setInterval(function(){
-        var time1 = Math.round( ( Date.now() / 1000 ) - time );
-        timeText.nodeValue = "Die Zeit beträgt: "+time1 +" Sekunden";
-    } ,1000 );
+    graf.setAttribute('style', '"height: 300px; width: 100%;"');
+
+    intervall = setInterval(function()
+    {
+         if(windowIsFocus)
+         {
+            time1 = Math.round( Date.now()/1000 - time );
+            if(lastTime!=0)
+            {diff = time1 - lastTime;
+                timeAb = time1 -diff ;
+                time1 = timeAb;
+                lastTime++;
+            }
+            
+            
+            timeText.nodeValue = "Die Zeit beträgt: "+time1  +" Sekunden";
+
+         }
+         else
+         {
+            lastTime = time1;
+         }
+        } ,1000 );
+   
+    
     timeNodeList.appendChild( timeText );
-    usertools.appendChild(btn);
-    usertools.appendChild( timeNodeList );
-    usertools.appendChild(graf);
+
+
+    var tr = document.createElement('tr');   
+    var tr1 = document.createElement('tr');
+    var td1 = document.createElement('td');
+    var td2 = document.createElement('td');
+    var td3 = document.createElement('td');
+    td1.appendChild(timeNodeList);
+    td2.appendChild(btn);
+    td3.appendChild(graf);
+    tr.appendChild(td1);
+    tr.appendChild(td2);
+    tr1.appendChild(td3);
+    table.appendChild(tr);
+    table.appendChild(tr1);
+
+
+    usertools.appendChild(table);
     btn.onclick = function (){einblenden(timeNodeList)};
 }
 
@@ -42,19 +99,17 @@ window.onload=function(){
  grafzeichnen();
 }
 
+
 //Zeitmessung wird gestoppt und gespeichert      
 window.onbeforeunload=function(){
- timeSite = Math.round( ( Date.now() / 1000 ) - time );
+ //timeSite = Math.round( ( Date.now() / 1000 ) - time );
  var x = new XMLHttpRequest;
- x.open( 'get','/dokuwiki/lib/plugins/doctimeread/storetime.php?action=store&time=' + timeSite+'&day='+date );
+ x.open( 'get','/dokuwiki/lib/plugins/doctimeread/storetime.php?action=store&time=' + time1+'&day='+date );
  x.send();
 }
 
-//Zeit stoppen
-$(window).focus()
-{
-    
-}
+//Zeit stoppen32,
+
 
 //Funktion zum ein und ausblenden der Zeit
 function einblenden(timenode )
