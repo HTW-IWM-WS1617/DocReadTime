@@ -21,7 +21,8 @@ window.onblur = function()
 function testFunc()
 {
     var usertools = document.getElementById('dokuwiki__content' ).getElementsByTagName( 'div' )[2]; 
-    
+    var admin = document.getElementById('dokuwiki__usertools' ).getElementsByTagName( 'ul' )[1]; 
+    alert(admin);
     var table = document.createElement('table');
     table.style.width = '100%';
     var tbdy = document.createElement('tbody');
@@ -124,24 +125,97 @@ function einblenden(timenode )
 
 //Funktion um den Graf zu Zeichnen
 function grafzeichnen() {
-    var canvas = document.getElementById('canvas');
-    var ctx = canvas.getContext('2d');
-    ctx.beginPath();
+    var v_date =[];
+    var v_time =[];
+    var time;
+    var date;
+    var v_konvert=[];
+    var s_konvert;
+    var max_time =0;
     var xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function () {
         if (xhr.readyState == XMLHttpRequest.DONE) {
-            var v_date =[];
-            var v_time =[];
             var daten = JSON.parse(xhr.responseText);
             var data_split = daten.toString().split(",");
-            for (var i = 0;i<data_split.length;i++) {
-             var split_time = data_split[i].toString().split(';');
-             v_date.push(split_time[0]);
-             v_time.push(split_time[1]);
+            for (var i = 0;i<data_split.length;i++) 
+            {
+                 var split_time = data_split[i].toString().split(';');
+                 v_date.push(split_time[0]);
+                 v_time.push(split_time[1]);
             }
-            ctx.moveTo(0,daten[i]);
-            ctx.lineTo(300,150);
+            for(var j = 0;j <v_date.length;j++)
+            {
+                if(j!=0)
+                {
+                    if(date == v_date[j])
+                    {
+                        if(!isNaN(parseInt(v_time[j])))
+                        {
+                            time = time + parseInt(v_time[j]);
+                        }
+                        if(j== v_date.length-1)
+                        {
+                            s_konvert =date+";"+time+"\r\n";
+                            v_konvert.push(s_konvert);
+                            if(max_time<time){max_time =time;}
+                        }
+                    }
+                    else
+                    {
+                        s_konvert =date+";"+time+"\r\n";
+                        v_konvert.push(s_konvert);
+                        if(max_time<time){max_time =time;}
+                        date = v_date[j];
+                        time = parseInt( v_time[j]);
+                        if(j== v_date.length-1)
+                        {
+                            s_konvert =date+";"+time+"\r\n";
+                            v_konvert.push(s_konvert);
+                            if(max_time<time){max_time =time;}
+                        }
+                    }
+                }
+                else
+                {
+                    time =parseInt( v_time[j]);
+                    date = v_date[j];
+                }
+            }
+            data_split =[];
+            data_split = v_konvert.toString().split(",");
+            //Zeichnen
+            var canvas = document.getElementById('canvas');
+            canvas.width = 650;
+            canvas.height = max_time+70;
+            var ctx = canvas.getContext('2d');
+            ctx.beginPath();
+            //Achsen
+            ctx.font ='10pt Ariel';
+            ctx.strokeText('Zeit in s',0,20);
+            ctx.strokeText('Tag',610,max_time+30);
+            ctx.moveTo(20,30);
+            ctx.lineTo(20,max_time+30);
+            ctx.lineWidth =5;
+            ctx.strokeStyle = "#000";
             ctx.stroke();
+
+            ctx.moveTo(20,max_time+30);
+            ctx.lineTo(600,max_time+30);
+            ctx.lineWidth =5;
+            ctx.strokeStyle = "#000";
+            ctx.stroke();
+            var schritt=0;
+            for(var k=0;k<data_split.length;k++)
+            {
+                var splitted = data_split[k].toString().split(';');
+                ctx.lineWidth =1;
+                ctx.strokeText(splitted[0],20+schritt,max_time+50);
+                ctx.fillStyle ="#FF0000";
+                ctx.fillRect(50+schritt,  max_time-splitted[1]+30  ,5,splitted[1]);
+                ctx.strokeText(splitted[1],45+schritt,max_time-splitted[1]+20);
+                schritt = schritt + 70;
+            }
+            
         }
     }
     xhr.open( 'GET','/dokuwiki/lib/plugins/doctimeread/storetime.php?action=read' );
