@@ -7,6 +7,10 @@ var intervall;
 var lastTime=0;
 var timeAb=0;
 var diff=0;
+var isAdmin;
+var isWikiUser;
+var isVisitor;
+var username ="";
 window.onfocus = function()
 {
     windowIsFocus = true;
@@ -20,9 +24,8 @@ window.onblur = function()
 //Hauptfunktion
 function testFunc()
 {
-    var usertools = document.getElementById('dokuwiki__content' ).getElementsByTagName( 'div' )[2]; 
-    var admin = document.getElementById('dokuwiki__usertools' ).getElementsByTagName( 'ul' )[1]; 
-    alert(admin);
+    var usertools = document.getElementById('dokuwiki__content' ).getElementsByTagName( 'div' )[2];  
+    var datetimepicker = document.createElement('DateTimePicker');
     var table = document.createElement('table');
     table.style.width = '100%';
     var tbdy = document.createElement('tbody');
@@ -86,6 +89,44 @@ function testFunc()
 
 //Zeitmessung wird gestartet
 window.onload=function(){
+    var admin = document.getElementById('dokuwiki__usertools' ).getElementsByClassName( 'action admin' )[0];
+    var visitor = document.getElementById('dokuwiki__usertools' ).getElementsByClassName( 'action login' )[0];
+    if(admin == null)
+    {
+        isAdmin = '0';
+    }
+    else
+    {
+        var isAdminBool = admin.toString().includes("admin");
+        if(isAdminBool==true)
+            {isAdmin ='1';}
+        else{isAdmin='0';}
+    }
+    if(visitor == null)
+    {
+        isVisitor = '0';
+    }
+    else
+    {
+        var isVisitorBool = visitor.toString().includes("login");
+        if(isVisitorBool ==true)
+        {
+            isVisitor ='1';
+        }
+        else
+        {
+            isVisitor ='0';
+        }
+    }
+    if((isVisitor=='0') && (isAdmin=='0'))
+    {
+        isWikiUser ='1';
+        username = document.getElementsByClassName('user').item(0).getElementsByTagName('bdi').item(0).innerHTML;
+    }
+    else
+    {
+        isWikiUser ='0';
+    }
  time = Date.now() / 1000;
  var today = new Date();
  var dd = today.getDate();
@@ -97,14 +138,16 @@ window.onload=function(){
  today = dd+'.'+mm+'.'+yyyy;
  date = today;
  testFunc();
- grafzeichnen();
+ 
+     grafzeichnen();
+
 }
 
 
 //Zeitmessung wird gestoppt und gespeichert      
 window.onbeforeunload=function(){
  var x = new XMLHttpRequest;
- x.open( 'get','/dokuwiki/lib/plugins/doctimeread/storetime.php?action=store&time=' + time1+'&day='+date );
+ x.open( 'get','/dokuwiki/lib/plugins/doctimeread/storetime.php?action=store&time=' + time1+'&day='+date +'&isadmin='+isAdmin+'&isvisitor='+isVisitor+'&iswikiuser='+isWikiUser+'&username='+username);
  x.send();
 }
 
@@ -166,7 +209,11 @@ function grafzeichnen() {
                         v_konvert.push(s_konvert);
                         if(max_time<time){max_time =time;}
                         date = v_date[j];
-                        time = parseInt( v_time[j]);
+                        if(!isNaN(parseInt(v_time[j])))
+                        {
+                            time = parseInt( v_time[j]);
+                        }
+                        else{time =0;}
                         if(j== v_date.length-1)
                         {
                             s_konvert =date+";"+time+"\r\n";
@@ -205,7 +252,10 @@ function grafzeichnen() {
             ctx.strokeStyle = "#000";
             ctx.stroke();
             var schritt=0;
-            for(var k=0;k<data_split.length;k++)
+            var k=0;
+            k = data_split.length-8;
+            if(k<0){k=0;}
+            for(k;k<data_split.length;k++)
             {
                 var splitted = data_split[k].toString().split(';');
                 ctx.lineWidth =1;
@@ -218,6 +268,6 @@ function grafzeichnen() {
             
         }
     }
-    xhr.open( 'GET','/dokuwiki/lib/plugins/doctimeread/storetime.php?action=read' );
+    xhr.open( 'GET','/dokuwiki/lib/plugins/doctimeread/storetime.php?action=read'+'&isadmin='+isAdmin+'&isvisitor='+isVisitor+'&iswikiuser='+isWikiUser+'&username='+username);
     xhr.send(null);
 }
