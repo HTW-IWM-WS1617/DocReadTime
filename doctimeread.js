@@ -11,6 +11,7 @@ var isAdmin;
 var isWikiUser;
 var isVisitor;
 var username ="";
+var select;
 window.onfocus = function()
 {
     windowIsFocus = true;
@@ -83,7 +84,7 @@ window.onload=function(){
 function testFunc()
 {
     var usertools = document.getElementById('dokuwiki__content' ).getElementsByTagName( 'div' )[2];  
-    var select = document.createElement('SELECT');
+    select = document.createElement('SELECT');
     select.setAttribute('id','selectZeit');
 
     var option = document.createElement("option");
@@ -97,10 +98,21 @@ function testFunc()
     select.appendChild(option1);
 
     var option2 = document.createElement("option");
-    option2.value = "jahr";
-    option2.text = "letztes Jahr";
+    option2.value = "3monat";
+    option2.text = "letzte 3 Monate";
     select.appendChild(option2);
 
+    var option3 = document.createElement("option");
+    option3.value = "6monat";
+    option3.text = "letzte 6 Monate";
+    select.appendChild(option3);
+
+    var option4 = document.createElement("option");
+    option4.value = "12monat";
+    option4.text = "letzte 12 Monate";
+    select.appendChild(option4);
+
+    select.onchange = function(){grafzeichnen();}
     var table = document.createElement('table');
     table.style.width = '100%';
     var tbdy = document.createElement('tbody');
@@ -211,12 +223,38 @@ function grafzeichnen() {
     var v_visitorSumtime =[];
     var max_time =0;
     var y=0;
+    var zeitrimt;
     var data_split_v =[];
+    var dateZeitraum = new Date();
     var xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function () {
         if (xhr.readyState == XMLHttpRequest.DONE) {
             var daten = JSON.parse(xhr.responseText);
             var data_split = daten.toString().split(",");
+            if(isAdmin=="1")
+            {
+                var Zeitraum = document.getElementById("selectZeit").value;
+                switch(Zeitraum)
+                {
+                    case "woche": dateZeitraum.setDate(dateZeitraum.getDate()-7);
+                        break;
+                    case "monat": dateZeitraum.setDate(dateZeitraum.getDate()-30);
+                        break;
+                    case "3monat": dateZeitraum.setDate(dateZeitraum.getDate()-90);
+                        break;
+                    case "6monat": dateZeitraum.setDate(dateZeitraum.getDate()-180);
+                        break;
+                    case "12monat": dateZeitraum.setDate(dateZeitraum.getDate()-365);
+                        break;
+                }
+                var dd = dateZeitraum.getDate();
+                var mm = dateZeitraum.getMonth()+1;
+                var yyyy = dateZeitraum.getFullYear();
+
+                if(dd<10){dd='0'+dd;}
+                if(mm<10){mm='0'+mm;}
+                dateZeitraum = dd+'.'+mm+'.'+yyyy;
+            }
             for (var i = 0;i<data_split.length;i++) 
             {
                  var split_time = data_split[i].toString().split(';');
@@ -239,44 +277,51 @@ function grafzeichnen() {
                 {
                     if(z!=0)
                     {
-                        if(visitor_date == v_date_visitor[z])
+                        if(v_date_visitor[z]!="undefined")
                         {
-                            if(!isNaN(parseInt(v_time_visitor[z])))
+                            if(visitor_date == v_date_visitor[z])
                             {
-                                visitor_time = visitor_time + parseInt(v_time_visitor[z]);
+                                if(!isNaN(parseInt(v_time_visitor[z])))
+                                {
+                                    visitor_time = visitor_time + parseInt(v_time_visitor[z]);
+                                }
+                                //Letztes Element
+                                if(z== v_date_visitor.length-1)
+                                {
+                                    visitorSumtime =visitor_date+";"+visitor_time+"\r\n";
+                                    v_visitorSumtime.push(visitorSumtime);
+                                    if(max_time<visitor_time){max_time =visitor_time;}
+                                }
                             }
-                            //Letztes Element
-                            if(z== v_date_visitor.length-1)
+                            else
                             {
                                 visitorSumtime =visitor_date+";"+visitor_time+"\r\n";
                                 v_visitorSumtime.push(visitorSumtime);
                                 if(max_time<visitor_time){max_time =visitor_time;}
-                            }
-                        }
-                        else
-                        {
-                            visitorSumtime =visitor_date+";"+visitor_time+"\r\n";
-                            v_visitorSumtime.push(visitorSumtime);
-                            if(max_time<visitor_time){max_time =visitor_time;}
-                            visitor_date = v_date_visitor[z];
-                            if(!isNaN(parseInt(v_time_visitor[z])))
-                            {
-                                visitor_time = parseInt( v_time_visitor[z]);
-                            }
-                            else{visitor_time =0;}
-                            //Letztes Element
-                            if(z== v_date_visitor.length-1)
-                            {
-                                visitorSumtime =visitor_date+";"+visitor_time+"\r\n";
-                                v_visitorSumtime.push(visitorSumtime);
-                                if(max_time<visitor_time){max_time =visitor_time;}
+                                visitor_date = v_date_visitor[z];
+                                if(!isNaN(parseInt(v_time_visitor[z])))
+                                {
+                                    visitor_time = parseInt( v_time_visitor[z]);
+                                }
+                                else{visitor_time =0;}
+                                //Letztes Element
+                                if(z== v_date_visitor.length-1)
+                                {
+                                    visitorSumtime =visitor_date+";"+visitor_time+"\r\n";
+                                    v_visitorSumtime.push(visitorSumtime);
+                                    if(max_time<visitor_time){max_time =visitor_time;}
+                                }
                             }
                         }
                     }
                     else
                     {
-                        visitor_time =parseInt( v_time_visitor[z]);
-                        visitor_date = v_date_visitor[z];
+                        if(v_date_visitor[z]!="undefined")
+                        {
+                            visitor_time =parseInt( v_time_visitor[z]);
+                            visitor_date = v_date_visitor[z];
+                        }
+                        
                     }
                 }
             }
@@ -284,46 +329,101 @@ function grafzeichnen() {
             {
                 if(j!=0)
                 {
-                    if(date == v_date[j])
+                    if(v_date[j]!="undefined")
                     {
-                        if(!isNaN(parseInt(v_time[j])))
+                        if(date == v_date[j])
                         {
-                            time = time + parseInt(v_time[j]);
+                            if(!isNaN(parseInt(v_time[j])))
+                            {
+                                time = time + parseInt(v_time[j]);
+                            }
+                            if(j== v_date.length-1)
+                            {
+                                s_konvert =date+";"+time+"\r\n";
+                                v_konvert.push(s_konvert);
+                                if(max_time<time){max_time =time;}
+                            }
                         }
-                        if(j== v_date.length-1)
+                        else
                         {
                             s_konvert =date+";"+time+"\r\n";
                             v_konvert.push(s_konvert);
                             if(max_time<time){max_time =time;}
-                        }
-                    }
-                    else
-                    {
-                        s_konvert =date+";"+time+"\r\n";
-                        v_konvert.push(s_konvert);
-                        if(max_time<time){max_time =time;}
-                        date = v_date[j];
-                        if(!isNaN(parseInt(v_time[j])))
-                        {
-                            time = parseInt( v_time[j]);
-                        }
-                        else{time =0;}
-                        if(j== v_date.length-1)
-                        {
-                            s_konvert =date+";"+time+"\r\n";
-                            v_konvert.push(s_konvert);
-                            if(max_time<time){max_time =time;}
+                            date = v_date[j];
+                            if(!isNaN(parseInt(v_time[j])))
+                            {
+                                time = parseInt( v_time[j]);
+                            }
+                            else{time =0;}
+                            if(j== v_date.length-1)
+                            {
+                                s_konvert =date+";"+time+"\r\n";
+                                v_konvert.push(s_konvert);
+                                if(max_time<time){max_time =time;}
+                            }
                         }
                     }
                 }
                 else
                 {
-                    time =parseInt( v_time[j]);
-                    date = v_date[j];
+                    if(v_date[j]!="undefined")
+                        {
+                            time =parseInt( v_time[j]);
+                            date = v_date[j];
+                        }
                 }
             }
+
             data_split =[];
             data_split = v_konvert.toString().split(",");
+            var splitagain = data_split[0].toString().split(';');
+            var s_datea = splitagain[0];
+            s_datea = s_datea.split('.');
+            var newDatea = s_datea[1] + "/" +s_datea[0] + '/' + s_datea[2];
+            var werta =new Date(newDatea).getTime();
+
+            var sad = dateZeitraum;
+            sad = sad.split('.');
+            var as = sad[1] + '/' + sad[0] + '/' + sad[2];
+            zeitrimt = new Date(as).getTime();
+            if(werta< zeitrimt )
+            {
+                var sdat= [] ;
+                for(var i=0 ; i<data_split.length ; i++)
+                {
+                    var s= data_split[i].toString().split(";");
+                    var s_date = s[0];
+                    s_date = s_date.split('.');
+                    var newDate = s_date[1] + "/" +s_date[0] + '/' + s_date[2];
+                    var wert =new Date(newDate).getTime();
+                    if((zeitrimt <wert)||(zeitrimt==wert))
+                    {
+                        sdat.push(data_split[i]);
+                    }
+                }
+                data_split =[];
+                data_split = sdat;
+                if(data_split.length>8)
+                {
+                    var ldat =[];
+                    ldat.push(data_split[0]);
+                    for(var j=0;j==5;j++)
+                    {
+                        var item = data_split[Math.floor(Math.random()*data_split.length-1)];
+                        if((item!=data_split[0])&&(item!=data_split[data_split.length]))
+                        {
+                            ldat.push(item);
+                        }
+                    }
+                    ldat.push(data_split[data_split.length]);
+                    data_split =[];
+                    data_split = ldat;
+                }
+            }
+
+
+
+
             //Zeichnen
             var canvas = document.getElementById('canvas');
             canvas.width = 650;
@@ -360,6 +460,46 @@ function grafzeichnen() {
             {
                 data_split_v = v_visitorSumtime.toString().split(",");
                 schritt =0;
+                var splitagain = data_split_v[0].toString().split(';');
+                var s_dates = splitagain[0];
+                    s_dates = s_dates.split('.');
+                    var newDates = s_dates[1] + "/" +s_dates[0] + '/' + s_dates[2];
+                    var werts =new Date(newDates).getTime();
+                    
+                if(werts< zeitrimt)
+                {
+                    var sdat=[];
+                    for(var i=0;i<data_split_v.length;i++)
+                    {
+                        var s= data_split_v[i].toString().split(";");
+                        var sd = s[0];
+                        sd = sd.split('.');
+                        var newDaten = sd[1] + "/" +sd[0] + '/' + sd[2];
+                        var wertn =new Date(newDaten).getTime();
+                        if(( zeitrimt <wertn)||(zeitrimt==wertn))
+                        {
+                            sdat.push(data_split_v[i]);
+                        }
+                    }
+                    data_split_v =[];
+                    data_split_v = sdat;
+                    if(data_split_v.length>8)
+                    {
+                        var ldat =[];
+                        ldat.push(data_split_v[0]);
+                        for(var j=0;j<6;j++)
+                        {
+                            var item = data_split_v[Math.floor(Math.random()*data_split_v.length-1)];
+                            if((item!=data_split_v[0])&&(item!=data_split_v[data_split_v.length]))
+                            {
+                                ldat.push(item);
+                            }
+                        }
+                        ldat.push(data_split_v[data_split_v.length]);
+                        data_split_v =[];
+                        data_split_v = ldat;
+                    }
+                }
             }
             if(data_split_v.length < data_split.length)
             {
