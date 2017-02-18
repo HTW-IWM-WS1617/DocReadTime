@@ -10,13 +10,15 @@ if ($action == 'store')
 		$time = $_GET['time'];
 	    $day = $_GET['day'];
 	    $sym = ";";
-		$data = $day .$sym .$time ;
+		
 		if($_GET['isvisitor']=='1')
 		{
-			file_put_contents('visitor_time.csv',  $data  . "\r\n", FILE_APPEND);
+			$data = "".$sym."". $sym. $day .$sym .$time ;
+			file_put_contents('timeOfAllUser.csv',  $data  . "\r\n", FILE_APPEND);
 		}
 		if($_GET['iswikiuser']=='1')
 		{
+			$data = $day .$sym .$time ;
 			file_put_contents($_GET['username'].'_time.csv',  $data  . "\r\n", FILE_APPEND);
 		    file_put_contents('timeOfAllUser.csv',  $data  . "\r\n", FILE_APPEND);
 		}
