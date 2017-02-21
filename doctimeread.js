@@ -373,7 +373,6 @@ function grafzeichnen() {
                         }
                 }
             }
-
             data_split =[];
             data_split = v_konvert.toString().split(",");
             var splitagain = data_split[0].toString().split(';');
@@ -386,6 +385,7 @@ function grafzeichnen() {
             sad = sad.split('.');
             var as = sad[1] + '/' + sad[0] + '/' + sad[2];
             zeitrimt = new Date(as).getTime();
+
             if(werta< zeitrimt )
             {
                 var sdat= [] ;
@@ -420,8 +420,6 @@ function grafzeichnen() {
                     data_split = ldat;
                 }
             }
-
-
 
 
             //Zeichnen
@@ -579,7 +577,17 @@ function grafzeichnen() {
 
                     var splitted_max   = maxArray[k].toString().split(';');
                     var splitted_min   = minArray[k].toString().split(';');
-                    if(splitted_min[0] == splitted_max[0])
+
+                    var int_max = splitted_max[0];
+                    var s_datea = int_max.split('.');
+                    var newDatea = s_datea[1] + "/" +s_datea[0] + '/' + s_datea[2];
+                    var TimeStamp_Max =new Date(newDatea).getTime();
+
+                    var int_min = splitted_min[0];
+                    var sada = int_min.split('.');
+                    var newDateddsca = sada[1] + "/" +sada[0] + '/' + sada[2];
+                    var TimeStamp_Min =new Date(newDateddsca).getTime();
+                    if(TimeStamp_Min == TimeStamp_Max)
                     {
                         ctx.lineWidth =1;
                         ctx.strokeText(splitted_max[0],20+schritt,max_time+50);
@@ -593,10 +601,10 @@ function grafzeichnen() {
                         schritt = schritt + 70;
                     }
 
-                    if(splitted_min[0]< splitted_max[0])
+                    if(TimeStamp_Min< TimeStamp_Max)
                     {
 
-                        if(splitted_min[0]!="")
+                        if(TimeStamp_Min!="")
                         {
                             //Anonynm
                             ctx.lineWidth =1;
@@ -626,9 +634,9 @@ function grafzeichnen() {
                         }
                        
                     }
-                    if(splitted_min[0]> splitted_max[0])
+                    if(TimeStamp_Min> TimeStamp_Max)
                     {
-                        if(splitted_max[0]!="")
+                        if(TimeStamp_Max!="")
                         {
 
                             ctx.lineWidth =1;
