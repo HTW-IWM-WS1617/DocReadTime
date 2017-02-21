@@ -375,51 +375,56 @@ function grafzeichnen() {
             }
             data_split =[];
             data_split = v_konvert.toString().split(",");
-            var splitagain = data_split[0].toString().split(';');
-            var s_datea = splitagain[0];
-            s_datea = s_datea.split('.');
-            var newDatea = s_datea[1] + "/" +s_datea[0] + '/' + s_datea[2];
-            var werta =new Date(newDatea).getTime();
-
-            var sad = dateZeitraum;
-            sad = sad.split('.');
-            var as = sad[1] + '/' + sad[0] + '/' + sad[2];
-            zeitrimt = new Date(as).getTime();
-
-            if(werta< zeitrimt )
+            if(isAdmin=='1')
             {
-                var sdat= [] ;
-                for(var i=0 ; i<data_split.length ; i++)
+                
+                var splitagain = data_split[0].toString().split(';');
+                var s_datea = splitagain[0];
+                s_datea = s_datea.split('.');
+                var newDatea = s_datea[1] + "/" +s_datea[0] + '/' + s_datea[2];
+                var werta =new Date(newDatea).getTime();
+
+                var sad = dateZeitraum;
+                sad = sad.split('.');
+                var as = sad[1] + '/' + sad[0] + '/' + sad[2];
+                zeitrimt = new Date(as).getTime();
+
+                if(werta< zeitrimt )
                 {
-                    var s= data_split[i].toString().split(";");
-                    var s_date = s[0];
-                    s_date = s_date.split('.');
-                    var newDate = s_date[1] + "/" +s_date[0] + '/' + s_date[2];
-                    var wert =new Date(newDate).getTime();
-                    if((zeitrimt <wert)||(zeitrimt==wert))
+                    var sdat= [] ;
+                    for(var i=0 ; i<data_split.length ; i++)
                     {
-                        sdat.push(data_split[i]);
-                    }
-                }
-                data_split =[];
-                data_split = sdat;
-                if(data_split.length>8)
-                {
-                    var ldat =[];
-                    ldat.push(data_split[0]);
-                    for(var j=0;j==5;j++)
-                    {
-                        var item = data_split[Math.floor(Math.random()*data_split.length-1)];
-                        if((item!=data_split[0])&&(item!=data_split[data_split.length]))
+                        var s= data_split[i].toString().split(";");
+                        var s_date = s[0];
+                        s_date = s_date.split('.');
+                        var newDate = s_date[1] + "/" +s_date[0] + '/' + s_date[2];
+                        var wert =new Date(newDate).getTime();
+                        if((zeitrimt <wert)||(zeitrimt==wert))
                         {
-                            ldat.push(item);
+                            sdat.push(data_split[i]);
                         }
                     }
-                    ldat.push(data_split[data_split.length]);
                     data_split =[];
-                    data_split = ldat;
+                    data_split = sdat;
+                    if(data_split.length>8)
+                    {
+                        var ldat =[];
+                        ldat.push(data_split[0]);
+                        for(var j=0;j==5;j++)
+                        {
+                            var item = data_split[Math.floor(Math.random()*data_split.length-1)];
+                            if((item!=data_split[0])&&(item!=data_split[data_split.length]))
+                            {
+                                ldat.push(item);
+                            }
+                        }
+                        ldat.push(data_split[data_split.length]);
+                        data_split =[];
+                        data_split = ldat;
+                    }
                 }
             }
+            
 
 
             //Zeichnen
@@ -457,7 +462,6 @@ function grafzeichnen() {
             if(isAdmin=='1')
             {
                 data_split_v = v_visitorSumtime.toString().split(",");
-                schritt =0;
                 var splitagain = data_split_v[0].toString().split(';');
                 var s_dates = splitagain[0];
                     s_dates = s_dates.split('.');
@@ -499,33 +503,37 @@ function grafzeichnen() {
                     }
                 }
             }
-            if(data_split_v.length < data_split.length)
+            if(isAdmin=='1')
             {
-                le = data_split.length;
-                maxArray = data_split;
-                me = data_split_v.length;
-                farbe_max = "Wiki User";
-                farbe_min = "Besucher";
-                minArray = data_split_v;
+                if(data_split_v.length < data_split.length)
+                {
+                    le = data_split.length;
+                    maxArray = data_split;
+                    me = data_split_v.length;
+                    farbe_max = "Wiki User";
+                    farbe_min = "Besucher";
+                    minArray = data_split_v;
+                }
+                if(data_split_v.length > data_split.length)
+                {
+                    le = data_split_v.length;
+                    maxArray = data_split_v;
+                    me = data_split.length;
+                    minArray = data_split;
+                    farbe_min = "Wiki User";
+                    farbe_max = "Besucher";
+                }
+                if(data_split_v.length == data_split.length)
+                {
+                    farbe_max = "Wiki User";
+                    farbe_min = "Besucher";
+                    le = data_split_v.length;
+                    minArray = data_split_v;
+                    me = data_split.length;
+                    maxArray = data_split;
+                }
             }
-            if(data_split_v.length > data_split.length)
-            {
-                le = data_split_v.length;
-                maxArray = data_split_v;
-                me = data_split.length;
-                minArray = data_split;
-                farbe_min = "Wiki User";
-                farbe_max = "Besucher";
-            }
-            if(data_split_v.length == data_split.length)
-            {
-                farbe_max = "Wiki User";
-                farbe_min = "Besucher";
-                le = data_split_v.length;
-                minArray = data_split_v;
-                me = data_split.length;
-                maxArray = data_split;
-            }
+            
             
 
 
@@ -558,11 +566,15 @@ function grafzeichnen() {
                 
                 
             }
+            if(isWikiUser=='1')
+            {
+                le = data_split.length;
+            }
             k = le-8;
             if(k<0){k=0;}
             for(k;k<le;k++)
             {
-                if(isAdmin!="1")
+                if(isWikiUser=='1')
                 {
                     var splitted = data_split[k].toString().split(';');
                     ctx.lineWidth =1;
@@ -572,7 +584,7 @@ function grafzeichnen() {
                     ctx.strokeText(splitted[1],45+schritt,max_time-splitted[1]+20);
                     schritt = schritt + 70;
                 }
-                else
+                if(isAdmin=='1')
                 {
 
                     var splitted_max   = maxArray[k].toString().split(';');
@@ -671,7 +683,6 @@ function grafzeichnen() {
                 }
                 
             }
-             
             
         }
     }
