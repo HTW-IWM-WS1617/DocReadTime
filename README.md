@@ -8,4 +8,4 @@ Anleitung / Installation
 3. Laden Sie sich das Plugin "DocReadTime" herunter: https://github.com/HTW-IWM-WS1617/DocReadTime/releases/tag/v1.0
 4. Entpacken Sie den Ordner unter C://xampp/dokuwiki/lib/plugins/ und benennen Sie den Ordner zu "docreadtime" um.
 5. Nun Starten Sie xampp und den Apache Server
-6. Öffnen Sie ihr Browser und geben Sie folgendes in der URL ein: localhost/dokuwiki/
+6. Öffnen Sie ihr Browser und geben Sie folgendes in der URL ein: localhost/dokuwiki/doku.php
