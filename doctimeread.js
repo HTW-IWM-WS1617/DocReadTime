@@ -1,3 +1,4 @@
+//Global Membervariable
 var time, timeSite, date,dateSite;
 var timeNodeList;
 var time1;
@@ -12,18 +13,21 @@ var isWikiUser;
 var isVisitor;
 var username ="";
 var select;
+
+//Function to intifize the user, when he fucos dokuwiki
 window.onfocus = function()
 {
     windowIsFocus = true;
 }
-
+//Function to intifize the user, when he lose dokuwiki
 window.onblur = function()
 {
     windowIsFocus = false;
 }
 
-//Zeitmessung wird gestartet
-window.onload=function(){
+//Start timemeasure
+window.onload=function()
+{
     var admin = document.getElementById('dokuwiki__usertools' ).getElementsByClassName( 'action admin' )[0];
     var visitor = document.getElementById('dokuwiki__usertools' ).getElementsByClassName( 'action login' )[0];
     if(admin == null)
@@ -72,16 +76,17 @@ window.onload=function(){
      if(mm<10){mm='0'+mm;}
      today = dd+'.'+mm+'.'+yyyy;
      date = today;
-     testFunc();
+     main();
  
-     grafzeichnen();
+     drawChart();
    
 }
 
 
 
-//Hauptfunktion
-function testFunc()
+//Mainfunction
+//Initialize all Elements
+function main()
 {
     var usertools = document.getElementById('dokuwiki__content' ).getElementsByTagName( 'div' )[2];  
     select = document.createElement('SELECT');
@@ -112,7 +117,7 @@ function testFunc()
     option4.text = "letzte 12 Monate";
     select.appendChild(option4);
 
-    select.onchange = function(){grafzeichnen();}
+    select.onchange = function(){drawChart();}
     var table = document.createElement('table');
     table.style.width = '100%';
     var tbdy = document.createElement('tbody');
@@ -185,7 +190,7 @@ function testFunc()
 
 
 
-//Zeitmessung wird gestoppt und gespeichert      
+//Stop timemeasure and save the time 
 window.onbeforeunload=function(){
  var x = new XMLHttpRequest;
  x.open( 'get','/dokuwiki/lib/plugins/doctimeread/storetime.php?action=store&time=' + time1+'&day='+date +'&isadmin='+isAdmin+'&isvisitor='+isVisitor+'&iswikiuser='+isWikiUser+'&username='+username);
@@ -193,7 +198,7 @@ window.onbeforeunload=function(){
 }
 
 
-//Funktion zum ein und ausblenden der Zeit
+//Function to fade the Time Label in and out
 function einblenden(timenode )
 {
     if(timenode.style.display == 'none')
@@ -207,8 +212,9 @@ function einblenden(timenode )
 }
 
 
-//Funktion um den Graf zu Zeichnen
-function grafzeichnen() {
+//Function to draw the chart
+function drawChart() 
+{
     var v_date =[];
     var v_time =[];
     var v_date_visitor = [];

@@ -1,10 +1,6 @@
 <?php
-
+//Data write
 $action = $_GET['action'];
-//$usIsAdmin = $_GET['isadmin'];
-//$usIsVisitor =  $_GET['isvisitor'];
-//$usIsWikuUser = $_GET['iswikiuser'];
-//$username =$_GET['username'];
 if ($action == 'store')
 {
 		$time = $_GET['time'];
@@ -18,14 +14,12 @@ if ($action == 'store')
 		}
 		if($_GET['iswikiuser']=='1')
 		{
-			$data = $day .$sym .$time ;
+			$data = $day .$sym .$time.$sym.$sym ;
 			file_put_contents($_GET['username'].'_time.csv',  $data  . "\r\n", FILE_APPEND);
 		    file_put_contents('timeOfAllUser.csv',  $data  . "\r\n", FILE_APPEND);
-		}
-			
-		
-		
+		}	
 }
+//Data read
 else if ($action == 'read')
 {
 	if($_GET['iswikiuser']=='1')
@@ -40,8 +34,4 @@ else if ($action == 'read')
 		$file = explode("\r\n", $file);
 		echo json_encode(array_filter($file));
 	}
-
-	
-	
-	
 }

@@ -1,0 +1,7 @@
+base	htwdocreadtime
+author	Hassan El-Bardan
+email	s0543830@htw-berlin.de
+date	2017-02-28
+name	htwdocreadtime plugin
+desc	Plug in to measure timstamp
+url	http://www.dokuwiki.org/plugin:htwdocreadtime
