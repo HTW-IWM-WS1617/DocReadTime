@@ -545,29 +545,30 @@ function drawChart()
 
             if(isAdmin=='1')
             {
-                ctx.fillStyle ="#04B404";
-                ctx.fillRect(550,40,20,10);
-                ctx.lineWidth =1;
+                
                 if(farbe_min=="Besucher")
                 {
-                    ctx.strokeText("Besucher",575,50);
-                }
-                else
-                {
-                    ctx.strokeText("WikiUser",575,50);
-                }
-
-                ctx.fillStyle ="#FF0000";
-                ctx.fillRect(550,20,20,10);
-                ctx.lineWidth =1;
-                if(farbe_min=="Besucher")
-                {
+                    ctx.fillStyle ="#04B404";
+                    ctx.fillRect(550,40,20,10);
+                    ctx.lineWidth =1;
+                    ctx.strokeText("Visitor",575,50);
+                    ctx.fillStyle ="#FF0000";
+                    ctx.fillRect(550,20,20,10);
+                    ctx.lineWidth =1;
                     ctx.strokeText("WikiUser",575,30);
                 }
                 else
                 {
+                    ctx.fillStyle ="#04B404";
+                    ctx.fillRect(550,40,20,10);
+                    ctx.lineWidth =1;
+                    ctx.strokeText("WikiUser",575,50);
+                    ctx.fillStyle ="#FF0000";
+                    ctx.fillRect(550,20,20,10);
+                    ctx.lineWidth =1;
                     ctx.strokeText("Besucher",575,30);
                 }
+
                  
                 
                 
@@ -576,25 +577,64 @@ function drawChart()
             {
                 le = data_split.length;
             }
+
+
+
+
             k = le-8;
             if(k<0){k=0;}
-            for(k;k<le;k++)
-            {
-                if(isWikiUser=='1')
+            if(isWikiUser=='1')
                 {
-                    var splitted = data_split[k].toString().split(';');
-                    ctx.lineWidth =1;
-                    ctx.strokeText(splitted[0],20+schritt,max_time+50);
-                    ctx.fillStyle ="#FF0000";
-                    ctx.fillRect(50+schritt,  max_time-splitted[1]+30  ,5,splitted[1]);
-                    ctx.strokeText(splitted[1],45+schritt,max_time-splitted[1]+20);
-                    schritt = schritt + 70;
+                    for(k;k<le;k++)
+                    {
+                        var splitted = data_split[k].toString().split(';');
+                        ctx.lineWidth =1;
+                        ctx.strokeText(splitted[0],20+schritt,max_time+50);
+                        ctx.fillStyle ="#FF0000";
+                        ctx.fillRect(50+schritt,  max_time-splitted[1]+30  ,5,splitted[1]);
+                        ctx.strokeText(splitted[1],45+schritt,max_time-splitted[1]+20);
+                        schritt = schritt + 70;
+                    }
+                    
                 }
-                if(isAdmin=='1')
+            //for(k;k<le;k++)
+            if(isAdmin=='1')
+            {
+                while(le!=0)
                 {
-
-                    var splitted_max   = maxArray[k].toString().split(';');
-                    var splitted_min   = minArray[k].toString().split(';');
+                    if(maxArray.length ==0)
+                    {
+                        while(minArray.length!=0)
+                        {
+                            var splitted_min   = minArray[0].toString().split(';');
+                            ctx.lineWidth =1;
+                            ctx.strokeText(splitted_min[0],20+schritt,max_time+50);
+                            ctx.fillStyle ="#FF0000";
+                            ctx.fillRect(65+schritt,  max_time-splitted_min[1]+30  ,5,splitted_min[1]);
+                            ctx.strokeText(splitted_min[1],59+schritt,max_time-splitted_min[1]+20);
+                            schritt = schritt + 70;
+                            minArray.splice(0,1);
+                            le = minArray.length;
+                        }
+                    }
+                    else if(minArray.length ==0)
+                    {
+                        while(maxArray.length!=0)
+                        {
+                            var splitted_max   = maxArray[0].toString().split(';');
+                            ctx.lineWidth =1;
+                            ctx.strokeText(splitted_max[0],20+schritt,max_time+50);
+                            ctx.fillStyle ="#04B404";
+                            ctx.fillRect(50+schritt,  max_time-splitted_max[1]+30  ,5,splitted_max[1]);
+                            ctx.strokeText(splitted_max[1],45+schritt,max_time-splitted_max[1]+20);
+                            maxArray.splice(0,1);
+                            le = maxArray.length;
+                        }
+                    }
+                    else
+                    {
+                        var splitted_max   = maxArray[0].toString().split(';');
+                    var splitted_min   = minArray[0].toString().split(';');
 
                     var int_max = splitted_max[0];
                     var s_datea = int_max.split('.');
@@ -605,87 +645,124 @@ function drawChart()
                     var sada = int_min.split('.');
                     var newDateddsca = sada[1] + "/" +sada[0] + '/' + sada[2];
                     var TimeStamp_Min =new Date(newDateddsca).getTime();
+
+
                     if(TimeStamp_Min == TimeStamp_Max)
                     {
                         ctx.lineWidth =1;
                         ctx.strokeText(splitted_max[0],20+schritt,max_time+50);
-                        ctx.fillStyle ="#FF0000";
+                        ctx.fillStyle ="#04B404";
                         ctx.fillRect(50+schritt,  max_time-splitted_max[1]+30  ,5,splitted_max[1]);
                         ctx.strokeText(splitted_max[1],45+schritt,max_time-splitted_max[1]+20);
+                        maxArray.splice(0,1);
+
                         //Anonynm
-                        ctx.fillStyle ="#04B404";
+                        ctx.fillStyle ="#FF0000";
                         ctx.fillRect(65+schritt,  max_time-splitted_min[1]+30  ,5,splitted_min[1]);
                         ctx.strokeText(splitted_min[1],59+schritt,max_time-splitted_min[1]+20);
                         schritt = schritt + 70;
+                        minArray.splice(0,1);
+                        if(maxArray.length>minArray.length)
+                        {
+                            le = maxArray.length;
+                        }
+                        else
+                        {
+                            le = minArray.length;
+                        }
                     }
 
-                    if(TimeStamp_Min< TimeStamp_Max)
+                    if(TimeStamp_Min> TimeStamp_Max)
                     {
-
-                        if(TimeStamp_Min!="")
+                        if(TimeStamp_Min>0)
                         {
-                            //Anonynm
                             ctx.lineWidth =1;
-                            ctx.strokeText(splitted_min[0],20+schritt,max_time+50);
+                            ctx.strokeText(splitted_max[0],20+schritt,max_time+50);
                             ctx.fillStyle ="#04B404";
-                            ctx.fillRect(65+schritt,  max_time-splitted_min[1]+30  ,5,splitted_min[1]);
-                            ctx.strokeText(splitted_min[1],59+schritt,max_time-splitted_min[1]+20);
+                            ctx.fillRect(50+schritt,  max_time-splitted_max[1]+30  ,5,splitted_max[1]);
+                            ctx.strokeText(splitted_max[1],45+schritt,max_time-splitted_max[1]+20);
                             schritt = schritt + 70;
-                            maxArray.push(maxArray[k]);
-                            maxArray.sort();
-                            minArray.push(";");
-                            le++;
+
+                            maxArray.splice(0,1);
+                            if((maxArray.length==0)&&(minArray.length!=0))
+                            {
+                                le= minArray.length;
+                            }
+                            else
+                            {
+                                le=maxArray.length;
+                            }
+                            
+                           
                         }
                         else
                         {
                             ctx.lineWidth =1;
-                            ctx.strokeText(splitted_max[0],20+schritt,max_time+50);
+                            ctx.strokeText(splitted_min[0],20+schritt,max_time+50);
                             ctx.fillStyle ="#FF0000";
-                            ctx.fillRect(50+schritt,  max_time-splitted_max[1]+30  ,5,splitted_max[1]);
-                            ctx.strokeText(splitted_max[1],45+schritt,max_time-splitted_max[1]+20);
+                            ctx.fillRect(65+schritt,  max_time-splitted_min[1]+30  ,5,splitted_min[1]);
+                            ctx.strokeText(splitted_min[1],59+schritt,max_time-splitted_min[1]+20);
                             schritt = schritt + 70;
-                            if(maxArray[k+1]!="")
+
+                            minArray.splice(0,1);
+                            if((minArray.length==0)&&(maxArray.length!=0))
                             {
-                                le++;
-                                minArray.push("");
+                                le=maxArray.length;
                             }
+                            else
+                            {
+                                le=minArray.length;
+                            }
+                            
                         }
                        
                     }
-                    if(TimeStamp_Min> TimeStamp_Max)
+                    if(TimeStamp_Min< TimeStamp_Max)
                     {
-                        if(TimeStamp_Max!="")
+                        if(TimeStamp_Max>0)
                         {
-
-                            ctx.lineWidth =1;
-                            ctx.strokeText(splitted_max[0],20+schritt,max_time+50);
-                            ctx.fillStyle ="#FF0000";
-                            ctx.fillRect(50+schritt,  max_time-splitted_max[1]+30  ,5,splitted_max[1]);
-                            ctx.strokeText(splitted_max[1],45+schritt,max_time-splitted_max[1]+20);
-                            schritt = schritt + 70;
-                            minArray.push(minArray[k]);
-                            minArray.sort();
-                            maxArray.push(";");
-                            le++;
-                        }
-                        else
-                        {
-                            //Anonynm
                             ctx.lineWidth =1;
                             ctx.strokeText(splitted_min[0],20+schritt,max_time+50);
-                            ctx.fillStyle ="#04B404";
+                            ctx.fillStyle ="#FF0000";
                             ctx.fillRect(65+schritt,  max_time-splitted_min[1]+30  ,5,splitted_min[1]);
                             ctx.strokeText(splitted_min[1],59+schritt,max_time-splitted_min[1]+20);
                             schritt = schritt + 70;
-                            if(minArray[k+1]!="")
+                            
+                            minArray.splice(0,1);
+                            if((minArray.length==0)&&(maxArray.length!=0))
                             {
-                                le++;
-                                maxArray.push("");
+                                le=maxArray.length;
+                            }
+                            else
+                            {
+                                le=minArray.length;
+                            }
+                            
+                        }
+                        else
+                        {
+                            ctx.lineWidth =1;
+                            ctx.strokeText(splitted_max[0],20+schritt,max_time+50);
+                            ctx.fillStyle ="#04B404";
+                            ctx.fillRect(50+schritt,  max_time-splitted_max[1]+30  ,5,splitted_max[1]);
+                            ctx.strokeText(splitted_max[1],45+schritt,max_time-splitted_max[1]+20);
+                            schritt = schritt + 70;
+                            
+                            maxArray.splice(0,1);
+                            if((maxArray.length==0)&&(minArray.length!=0))
+                            {
+                                le= minArray.length;
+                            }
+                            else
+                            {
+                                le=maxArray.length;
                             }
                         }
                         
                      
                     }
+                    }
+                    
                 }
                 
             }
